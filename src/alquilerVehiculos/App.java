@@ -1,8 +1,8 @@
 package alquilerVehiculos;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
-import listaAlumnos.Alumno;
 
 public class App {
 	public static ArrayList<Vehiculo> listaVehiculos;
@@ -82,6 +82,33 @@ public class App {
 
 
 	private static void crearVehiculos() {
+		
+		Scanner sc = new Scanner(System.in);
+
+		System.out.print("Indica la matrícula del vehículo: ");
+		String matricula = sc.nextLine();
+
+		System.out.print("Indica la marca del vehículo: ");
+		String marca = sc.nextLine();
+
+		System.out.print("Añade el Precio por Día: ");
+		double precioDia = sc.nextDouble(); 
+		sc.nextLine(); 
+
+		System.out.print("Indica el tipo de combustible (TEXTO): ");
+		
+		TipoCombustible tipoCombustible = TipoCombustible.valueOf(sc.nextLine().toUpperCase()); 
+
+		System.out.print("Añade los días de alquiler: "); 
+		int diasAlquiler = sc.nextInt(); 
+
+		System.out.print("Añade el número de puertas: "); 
+		int numeroPuertas = sc.nextInt(); 
+
+		System.out.print("Nota: ");
+		double nota = sc.nextDouble();
+		sc.nextLine();
+
 		
 		
 		
