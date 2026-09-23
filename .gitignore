@@ -1,0 +1,14 @@
+# El clon de Exercism Java NO se versiona aqui (tiene su propio upstream)
+exercism-java/
+
+# Java / Gradle / IntelliJ-Android Studio
+.gradle/
+build/
+out/
+.idea/
+*.iml
+local.properties
+
+# CodeGraph/Engram — indices locales, no versionar
+.engram/
+.codegraph/
