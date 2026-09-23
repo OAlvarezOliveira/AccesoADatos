@@ -1,10 +1,11 @@
 # El clon de Exercism Java NO se versiona aqui (tiene su propio upstream)
 exercism-java/
 
-# Java / Gradle / IntelliJ-Android Studio
+# Java / Gradle / IntelliJ-Android Studio / Eclipse
 .gradle/
 build/
 out/
+bin/
 .idea/
 *.iml
 local.properties
