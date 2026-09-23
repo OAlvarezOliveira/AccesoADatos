@@ -2,6 +2,6 @@ package videojuegosAlquiler;
 
 public enum TipoPlataforma {
 	
-	 PC, PLAYSTATION5, Switch2
+	 PC, PLAYSTATION5, SWITCH2
 
 }

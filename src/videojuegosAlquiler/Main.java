@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     public static ArrayList<Videojuego> listaVideojuego = new ArrayList<>();
+    public static boolean continuar = true;
     public static Path rutaGeneral = Path.of("videojuegos.txt");
     public static Path rutaRPG = Path.of("videojuegosRPG.txt");
 
@@ -22,47 +23,51 @@ public class Main {
 
     private static void menu() throws VideojuegoExcepcion {
         Scanner sc = new Scanner(System.in);
+        String linea = "";
 
-        System.out.print("Indica el nombre del videojuego: ");
-        String nombre = sc.nextLine();
 
-        System.out.print("Indica el desarrollador del videojuego: ");
-        String desarrollador = sc.nextLine();
-        
-        System.out.print("Añade el anioLanzamiento: "); 
-        int anioLanzamiento = sc.nextInt(); 
+        while (continuar) {
+            System.out.print("Indica el nombre del videojuego: ");
+            String nombre = sc.nextLine();
 
-        System.out.print("Añade el Precio: ");
-        double precio = sc.nextDouble(); 
-        sc.nextLine(); 
+            System.out.print("Indica el desarrollador del videojuego: ");
+            String desarrollador = sc.nextLine();
 
-       
-        TipoVideojuego tipoVideojuego;
-        try {
-            System.out.print("Indica el tipo de TipoVideojuego (SHOOTER, RPG, INDIE, ESTRATEGIA): ");
-            tipoVideojuego = TipoVideojuego.valueOf(sc.nextLine().trim().toUpperCase()); 
-        } catch (IllegalArgumentException e) {
-            System.out.println("Tipo no válido, se asignará INDIE por defecto.");
-            tipoVideojuego = TipoVideojuego.INDIE;
+            System.out.print("Añade el anioLanzamiento: ");
+            int anioLanzamiento = sc.nextInt();
+
+            System.out.print("Añade el Precio: ");
+            double precio = sc.nextDouble();
+            sc.nextLine();
+
+            TipoVideojuego tipoVideojuego;
+            try {
+                System.out.print("Indica el tipo de TipoVideojuego (SHOOTER, RPG, INDIE, ESTRATEGIA): ");
+                tipoVideojuego = TipoVideojuego.valueOf(sc.nextLine().trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Tipo no válido, se asignará INDIE por defecto.");
+                tipoVideojuego = TipoVideojuego.INDIE;
+            }
+
+            TipoPlataforma tipoPlataforma;
+            try {
+                System.out.print("Indica la plataforma a la que pertenece (PC, PLAYSTATION5, SWITCH2): ");
+                tipoPlataforma = TipoPlataforma.valueOf(sc.nextLine().trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Plataforma no válida, se asignará PC por defecto.");
+                tipoPlataforma = TipoPlataforma.PC;
+            }
+
+            listaVideojuego.add(new Videojuego(nombre, desarrollador, anioLanzamiento, precio, tipoVideojuego, tipoPlataforma));
+
+            linea = nombre + ";" + desarrollador + ";" + anioLanzamiento + ";" + precio + ";" + tipoVideojuego + ";" + tipoPlataforma + "\n";
+
+            System.out.print("\n¿Quieres añadir otro videojuego? (s/n): ");
+            String respuesta = sc.nextLine().trim().toLowerCase();
+            continuar = respuesta.equals("s");
         }
-        
-        TipoPlataforma tipoPlataforma;
-        try {
-            System.out.print("Indica la plataforma a la que pertenece (PC, PLAYSTATION5, SWITCH2): ");
-            tipoPlataforma = TipoPlataforma.valueOf(sc.nextLine().trim().toUpperCase()); 
-        } catch (IllegalArgumentException e) {
-            System.out.println("Plataforma no válida, se asignará PC por defecto.");
-            tipoPlataforma = TipoPlataforma.PC;
-        }
 
-       
-        listaVideojuego.add(new Videojuego(nombre, desarrollador, anioLanzamiento, precio, tipoVideojuego, tipoPlataforma));
-        
-        
-        String linea = nombre + ";" + desarrollador + ";" + anioLanzamiento + ";" + precio + ";" + tipoVideojuego + ";" + tipoPlataforma + "\n";
-        
-       
-        System.out.println("\nElige una opción:"); 
+        System.out.println("\nElige una opción:");
         System.out.println("1 - Añadir al final del archivo (APPEND)");
         System.out.println("2 - Crear o sobrescribir archivo completo (CREATE)");
         System.out.println("3 - Borrar/Truncar archivo guardando solo esta línea");
@@ -82,7 +87,7 @@ public class Main {
                     borrarLista(linea);
                     break; 
                 case 4:
-                	creaVideojuego(); 
+                	listarVideojuego(); 
                     break;    
                 default:
                     System.out.println("Opción no válida");
@@ -94,9 +99,8 @@ public class Main {
         }
     }
 
-    private static void creaVideojuego() {
-        System.out.println("Videojuego creado en memoria con éxito.");
-        System.out.println("La lista actual de videojugos es ");
+    private static void listarVideojuego() {
+        System.out.println("La lista actual de videojuegos es ");
         for (Videojuego videojuego : listaVideojuego) {
             System.out.println(videojuego);
 
