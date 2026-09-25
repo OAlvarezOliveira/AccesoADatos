@@ -1,2 +1,0 @@
-zelda;nintendo;1983;78.0;RPG;PC
-zelda;nintendo;1982;78.0;RPG;PC
