@@ -1,8 +1,10 @@
-# Plan Java — base general en 30–45 días (puente para Acceso a Datos)
+# Plan Java — base general en 30–45 sesiones (puente para Acceso a Datos)
 
 **Estado:** el temario/UDs oficial de Acceso a Datos aún no está disponible. Las Fases 1–2 no dependen de él (arrancar ya), y se ejecutan sin esperar al programa de la asignatura.
 
-**Objetivo:** en 30–45 días tener una **base general sólida de Java** — suficiente para que cuando Acceso a Datos aborde JDBC, ficheros, XML/JSON y persistencia, no estés atascado en la sintaxis del lenguaje. La parte específica de la asignatura la enseña el profesor: aquí solo se hace un **vistazo de puente** (verla una vez para no ir en blanco), no profundización.
+**Objetivo:** en 30–45 sesiones tener una **base general sólida de Java** — suficiente para que cuando Acceso a Datos aborde JDBC, ficheros, XML/JSON y persistencia, no estés atascado en la sintaxis del lenguaje. La parte específica de la asignatura la enseña el profesor: aquí solo se hace un **vistazo de puente** (verla una vez para no ir en blanco), no profundización.
+
+**Ritmo real (decisión 2026-09-25):** las "sesiones" numeradas más abajo NO son días de calendario consecutivos. Cada semana (lunes a domingo) da hasta 7 huecos posibles; **mínimo 1 sesión por semana**, y se añaden más si el avance del curso lo pide, inspeccionando el horario de clase (calendario "CLASES DAM"). Si con las sesiones normales no llega, se tira de los huecos de "PostClase". Cuando toque meter la siguiente sesión, se elige mirando el horario, no por orden automático de fecha.
 
 Base metodológica: repo oficial de ejercicios [Exercism Java track](https://github.com/exercism/java) (clonado en `exercism-java/`), equivalente en estructura a Kotlin Koans — cada ejercicio trae un stub y unos tests, se resuelve escribiendo código hasta que el test en verde pasa.
 
@@ -12,22 +14,23 @@ Base metodológica: repo oficial de ejercicios [Exercism Java track](https://git
 - **Run window** → salida de `System.out.println`, igual que la consola en los otros repos.
 - **Exercism Java** → cada ejercicio se resuelve dentro de su propio módulo (`exercism-java/exercises/practice/<ejercicio>/`), con tests JUnit que verifican la solución.
 
-## Cómo encaja en 30–45 días
+## Cómo encaja en 30–45 sesiones
 
-- **Un ejercicio de Exercism por día** es el ritmo base (la lista `exercises/practice/` tiene más de 100 ejercicios progresivos; se elige un subconjunto ordenado por dificultad creciente para las Fases 1–2, dejando el resto como cantera de repaso). Con el margen hasta 45 días quedan días libres para repasar y hacer el puente.
-- **El final del plan (semana final) es un vistazo a Acceso a Datos**, con material propio, no con Exercism.
+- **Un ejercicio de Exercism por sesión** es el ritmo base (la lista `exercises/practice/` tiene más de 100 ejercicios progresivos; se elige un subconjunto ordenado por dificultad creciente para las Fases 1–2, dejando el resto como cantera de repaso). Con el margen hasta 45 sesiones queda margen para repasar y hacer el puente sin ir apretado.
+- **El final del plan (últimas sesiones) es un vistazo a Acceso a Datos**, con material propio, no con Exercism.
 
 ## Reglas de ritmo (lo que da fluidez)
 
-- **Kata diaria (5–10 min)** incluso en días sin sesión: se edita `katas/Katas.java` y se ejecuta `main()` (cada día una kata nueva, sin borrar las anteriores).
+- **Mínimo una sesión por semana.** Si el horario deja hueco para más, se mete más; si no, no se fuerza por debajo de ese mínimo.
+- **Kata (5–10 min) en cada sesión**, aunque sea corta: se edita `katas/Katas.java` y se ejecuta `main()` (cada sesión una kata nueva, sin borrar las anteriores).
 - **Leer antes de ejecutar:** predecir la salida antes de correr el código, sobre todo con tipado estático, `null` y excepciones checked — ahí está la diferencia real con Python/Kotlin.
 - **Ejercicios obligatorios de Exercism:** se resuelven escribiendo código hasta que el test en verde pasa, no solo leyendo la solución de referencia (`.meta/`).
 
 ## Fases
 
-### Fase 1 — Fundamentos (días 1–15, ~15 días)
+### Fase 1 — Fundamentos (sesiones 1–15, ~15 sesiones)
 
-| Días | Contenido | Foco |
+| Sesiones | Contenido | Foco |
 |---|---|---|
 | 1–2 | Hello World, variables, tipos primitivos, casting | tipado estático explícito frente a la inferencia de Python/Kotlin |
 | 3–4 | Control de flujo (`if`, `switch`, bucles) | `switch` clásico vs `when` de Kotlin; sin `for` sobre rangos nativo |
@@ -39,9 +42,9 @@ Base metodológica: repo oficial de ejercicios [Exercism Java track](https://git
 
 Cierre de fase: repaso de los ejercicios de Exercism resueltos hasta aquí (todos los tests en verde).
 
-### Fase 2 — Robustez y tipos avanzados (días 16–23, ~8 días)
+### Fase 2 — Robustez y tipos avanzados (sesiones 16–23, ~8 sesiones)
 
-| Días | Contenido | Foco |
+| Sesiones | Contenido | Foco |
 |---|---|---|
 | 16–17 | Excepciones (`checked` vs `unchecked`, `try`/`catch`/`finally`) | Java obliga a declarar/capturar checked exceptions — no existe en Python/Kotlin |
 | 18 | Clases abstractas, `enum` | modelar estados cerrados — comparar con `sealed class` de Kotlin |
@@ -52,11 +55,11 @@ Cierre de fase: repaso de los ejercicios de Exercism resueltos hasta aquí (todo
 
 Cierre de fase: repaso de excepciones + generics + enums.
 
-### Fase 3 — Puente a Acceso a Datos (días 24–30, ~7 días)
+### Fase 3 — Puente a Acceso a Datos (sesiones 24–30, ~7 sesiones)
 
 Esto NO es dominar persistencia — es **verlo una vez** para que cuando el profesor lo explique no vayas en blanco. Solo vistazo, sin profundizar (eso lo da el profesor):
 
-| Días | Contenido | Foco |
+| Sesiones | Contenido | Foco |
 |---|---|---|
 | 24 | **Ficheros y serialización** (`java.io`, `java.nio.file`, `Serializable`) | lectura/escritura de texto y binario, diferencia stream vs bloque |
 | 25 | **JDBC — conexión y consultas básicas** | `Connection`, `Statement`/`PreparedStatement`, `ResultSet` |
@@ -74,13 +77,13 @@ Esto NO es dominar persistencia — es **verlo una vez** para que cuando el prof
 ## Alinear con el temario real (pendiente de recalibración)
 
 - **El temario/UDs oficial de Acceso a Datos aún no ha llegado.** La Fase 3 queda por defecto con el orden habitual (ficheros → JDBC → SQL → XML/JSON → ORM), que es el natural de la asignatura.
-- **Punto de recalibración:** cuando el profesor entregue el temario, se reordenan los días 24–29 de la Fase 3 para que el vistazo caiga justo antes de la semana en que se aborde cada tema en clase.
-- Mientras tanto, aviso de recarga: **día 20 de ejecución** (media de Fase 2), pedir/recoger el temario si ya existe, para recalibrar la Fase 3 con margen.
+- **Punto de recalibración:** cuando el profesor entregue el temario, se reordenan las sesiones 24–29 de la Fase 3 para que el vistazo caiga justo antes de la semana en que se aborde cada tema en clase.
+- Mientras tanto, aviso de recarga: **sesión 20 de ejecución** (media de Fase 2), pedir/recoger el temario si ya existe, para recalibrar la Fase 3 con margen.
 
 ## Cómo usar esto
 
-1. Un ejercicio de Exercism Java por día (o dos si son cortos).
-2. Kata diaria en `katas/Katas.java`, incluso en días sin sesión.
+1. Un ejercicio de Exercism Java por sesión (o dos si son cortos).
+2. Kata en cada sesión en `katas/Katas.java`.
 3. Cierre de fase: repasar los ejercicios de esa fase hasta que estén todos en verde, sin mirar la solución de referencia.
 4. Dudas → aquí, contrastando con la sintaxis equivalente ya conocida (Python/Kotlin, según convenga).
-5. Cierre semanal: `notebooklm generate quiz|flashcards` en "Java Learning AI Brain" (fuente: este plan).
+5. Cierre semanal: `notebooklm generate quiz|flashcards` en "DAM - 2º - Acceso a datos" (fuente: este plan).
