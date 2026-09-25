@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    public static ArrayList<Videojuego> listaVideojuego = new ArrayList<>();
+    public static ArrayList<Videojuego> listaVideojuegos = new ArrayList<>();
     public static boolean continuar = true;
-    public static Path rutaGeneral = Path.of("videojuegos.txt");
-    public static Path rutaRPG = Path.of("videojuegosRPG.txt");
+    public static Path rutaOtros = Path.of("src/videojuegosAlquiler/videojuegos.txt");
+    public static Path rutaRPG = Path.of("src/videojuegosAlquiler/videojuegosRPG.txt");
 
     public static void main(String[] args) {
         try {
@@ -23,8 +23,6 @@ public class Main {
 
     private static void menu() throws VideojuegoExcepcion {
         Scanner sc = new Scanner(System.in);
-        String linea = "";
-
 
         while (continuar) {
             System.out.print("Indica el nombre del videojuego: ");
@@ -58,9 +56,7 @@ public class Main {
                 tipoPlataforma = TipoPlataforma.PC;
             }
 
-            listaVideojuego.add(new Videojuego(nombre, desarrollador, anioLanzamiento, precio, tipoVideojuego, tipoPlataforma));
-
-            linea = nombre + ";" + desarrollador + ";" + anioLanzamiento + ";" + precio + ";" + tipoVideojuego + ";" + tipoPlataforma + "\n";
+            listaVideojuegos.add(new Videojuego(nombre, desarrollador, anioLanzamiento, precio, tipoVideojuego, tipoPlataforma));
 
             System.out.print("\n¿Quieres añadir otro videojuego? (s/n): ");
             String respuesta = sc.nextLine().trim().toLowerCase();
@@ -68,27 +64,27 @@ public class Main {
         }
 
         System.out.println("\nElige una opción:");
-        System.out.println("1 - Añadir al final del archivo (APPEND)");
-        System.out.println("2 - Crear o sobrescribir archivo completo (CREATE)");
-        System.out.println("3 - Borrar/Truncar archivo guardando solo esta línea");
+        System.out.println("1 - Crear archivo con la lista completa (CREATE)");
+        System.out.println("2 - Añadir un registro al final del archivo (APPEND)");
+        System.out.println("3 - Sobrescribir el archivo dejando solo el último videojuego (CREATE + TRUNCATE)");
         System.out.println("4 - Listar Coleccion de Videojuegos");
         System.out.print("Opción: ");
         int opcion = sc.nextInt();
-        
+
         try {
             switch (opcion) {
                 case 1:
-                    añadeNuevo(linea);        
+                    crearArchivoCompleto();
                     break;
-                case 2: 
-                    iniciarArchivo(linea);
+                case 2:
+                    añadirAlFinal();
                     break;
                 case 3:
-                    borrarLista(linea);
-                    break; 
+                    sobrescribirConUltimo();
+                    break;
                 case 4:
-                	listarVideojuego(); 
-                    break;    
+                	listarVideojuegos();
+                    break;
                 default:
                     System.out.println("Opción no válida");
             }
@@ -99,40 +95,64 @@ public class Main {
         }
     }
 
-    private static void listarVideojuego() {
+    private static void listarVideojuegos() {
         System.out.println("La lista actual de videojuegos es ");
-        for (Videojuego videojuego : listaVideojuego) {
+        for (Videojuego videojuego : listaVideojuegos) {
             System.out.println(videojuego);
 
 		}
     }
 
-    private static void borrarLista(String linea) throws IOException {
+    private static void sobrescribirConUltimo() throws IOException {
+        for (Videojuego v : listaVideojuegos) {
+            String lineaVideojuego = v.getNombre() + ";" + v.getDesarrollador() + ";"
+                + v.getAnioLanzamiento() + ";" + v.getPrecio() + ";"
+                + v.getTipoVideojuego() + ";" + v.getTipoPlataforma() + "\n";
 
-    	if (linea.contains("RPG")) {
-            Files.writeString(rutaRPG, linea , StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            System.out.println("Archivo limpiado y línea guardada.");
-    		
-    	}else {
-            Files.writeString(rutaGeneral, linea , StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            System.out.println("Archivo limpiado y línea guardada.");
-    	}
+            if (v.getTipoVideojuego() == TipoVideojuego.RPG) {
+                Files.writeString(rutaRPG, lineaVideojuego , StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } else {
+                Files.writeString(rutaOtros, lineaVideojuego , StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            }
+        }
 
+        System.out.println("Archivo limpiado y línea guardada.");
     }
 
-    private static void iniciarArchivo(String linea) throws IOException {
-    	if (linea.contains("RPG")) {
-            Files.writeString(rutaRPG, linea , StandardOpenOption.CREATE);
-            System.out.println("Archivo limpiado y línea guardada.");
-    		
-    	}else {
-            Files.writeString(rutaGeneral, linea , StandardOpenOption.CREATE);
-            System.out.println("Archivo limpiado y línea guardada.");
-    	}
+    private static void crearArchivoCompleto() throws IOException {
+        StringBuilder rpgTexto = new StringBuilder();
+        StringBuilder otrosTexto = new StringBuilder();
+
+        for (Videojuego v : listaVideojuegos) {
+            String lineaVideojuego = v.getNombre() + ";" + v.getDesarrollador() + ";"
+                + v.getAnioLanzamiento() + ";" + v.getPrecio() + ";"
+                + v.getTipoVideojuego() + ";" + v.getTipoPlataforma() + "\n";
+
+            if (v.getTipoVideojuego() == TipoVideojuego.RPG) {
+                rpgTexto.append(lineaVideojuego);
+            } else {
+                otrosTexto.append(lineaVideojuego);
+            }
+        }
+
+        Files.writeString(rutaRPG, rpgTexto.toString(), StandardOpenOption.CREATE);
+        Files.writeString(rutaOtros, otrosTexto.toString(), StandardOpenOption.CREATE);
+        System.out.println("Archivo creado con la lista completa.");
     }
 
-    private static void añadeNuevo(String linea) throws IOException {
-        Files.writeString(rutaGeneral, linea, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        System.out.printf("Línea añadida con éxito: %s", linea);
+    private static void añadirAlFinal() throws IOException {
+        for (Videojuego v : listaVideojuegos) {
+            String lineaVideojuego = v.getNombre() + ";" + v.getDesarrollador() + ";"
+                + v.getAnioLanzamiento() + ";" + v.getPrecio() + ";"
+                + v.getTipoVideojuego() + ";" + v.getTipoPlataforma() + "\n";
+
+            if (v.getTipoVideojuego() == TipoVideojuego.RPG) {
+                Files.writeString(rutaRPG, lineaVideojuego , StandardOpenOption.APPEND);
+                System.out.println("Línea añadida al final del archivo.");
+            } else {
+                Files.writeString(rutaOtros, lineaVideojuego , StandardOpenOption.APPEND);
+                System.out.println("Línea añadida al final del archivo.");
+            }
+        };
     }
 }
