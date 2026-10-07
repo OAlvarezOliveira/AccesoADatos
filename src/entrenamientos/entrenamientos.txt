@@ -1,0 +1,11 @@
+Ana;45
+Luis;60
+Ana;50
+Marta;55
+Luis;70
+Pedro;40
+Noa;65
+Luis;-10
+
+Marta;lineaMalFormada
+Ana;30
