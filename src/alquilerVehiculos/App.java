@@ -8,6 +8,7 @@ public class App {
     public static ArrayList<Vehiculo> listaVehiculos = new ArrayList<Vehiculo>();
     
     public static void main(String[] args) throws VehiculoException {
+    	
         // === COCHES ===
         listaVehiculos.add(new Coche("1111AAA", "Audi A5", 59.99, TipoCombustible.HIBRIDO, 12, 5));
         listaVehiculos.add(new Coche("2222BBB", "Seat Arona", 49.99, TipoCombustible.ELECTRICO, 15, 5));
@@ -165,7 +166,6 @@ public class App {
                 numeroPuertas = sc.nextInt();
             } else {
                 System.out.println("Error: Tipo de vehículo inválido.");
-                return;
             }
             sc.nextLine(); 
             
@@ -179,6 +179,8 @@ public class App {
             }
             System.out.println("¡Vehículo añadido con éxito!");
             
+            sc.close();
+            
         } catch (InputMismatchException e) {
             System.out.println("Error: Formato de número incorrecto.");
         } catch (IllegalArgumentException e) {
@@ -187,5 +189,6 @@ public class App {
             System.out.println("Error al crear vehiculo");
         }
     }
+
 }
 

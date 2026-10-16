@@ -177,6 +177,7 @@ public class Main {
             } 
         }
 		return noFiltraos;
+		
 	}
 
 	private static String creaLinea(Instrumento elementoArray) {

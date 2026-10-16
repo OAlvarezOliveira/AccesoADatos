@@ -1,6 +1,7 @@
 package videojuegosAlquiler;
 
 
+	@SuppressWarnings("serial")
 	public class VideojuegoExcepcion extends Exception {
 		
 	    public VideojuegoExcepcion(String mensaje) {

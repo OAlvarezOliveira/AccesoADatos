@@ -1,0 +1,3 @@
+Primera línea del archivo.
+Texto con tildes: á é í ó ú.
+Otros caracteres: ñ ü €.
