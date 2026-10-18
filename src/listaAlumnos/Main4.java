@@ -9,7 +9,7 @@ public class Main4 {
 	public static void main(String[] args)  {
 
 		
-		Path ruta = Path.of("notas.txt\"");
+		Path ruta = Path.of("notas.txt");
 		
 		
 
