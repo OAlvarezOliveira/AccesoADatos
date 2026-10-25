@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Hoja rápida: bases de datos y ficheros en Java</title>
+<style>
+  @page { size: A4; margin: 12mm 13mm; }
+  * { box-sizing: border-box; }
+  body { font: 9.6pt/1.35 "DejaVu Sans", Arial, sans-serif; color: #1a1a1a; margin: 0; }
+  h1 { font-size: 16pt; margin: 0 0 2mm; border-bottom: 2px solid #1f4e79; padding-bottom: 1mm; color: #1f4e79; }
+  h2, h3 { break-after: avoid; }
+  h2 code { background: transparent; color: #fff; font-size: inherit; }
+  h2 { font-size: 11.5pt; margin: 4mm 0 1.5mm; color: #fff; background: #1f4e79; padding: 1mm 2.5mm; border-radius: 2px; }
+  h3 { font-size: 10pt; margin: 2.5mm 0 1mm; color: #1f4e79; }
+  p { margin: 1mm 0; }
+  ul { margin: 1mm 0; padding-left: 5mm; }
+  li { margin: 0.4mm 0; }
+  code, pre { font-family: "DejaVu Sans Mono", monospace; font-size: 8.3pt; }
+  code { background: #eef2f7; padding: 0 1mm; border-radius: 2px; }
+  pre { background: #f4f6f9; border: 1px solid #d5dce6; border-left: 3px solid #1f4e79; padding: 1.5mm 2.5mm; margin: 1.2mm 0; white-space: pre-wrap; break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 1.2mm 0; break-inside: avoid; }
+  th, td { border: 1px solid #c3ccd9; padding: 0.8mm 2mm; text-align: left; vertical-align: top; }
+  th { background: #e3eaf3; }
+  .cols { display: flex; gap: 5mm; }
+  .cols > div { flex: 1; min-width: 0; }
+  .aviso { background: #fff4e0; border: 1px solid #e8b95a; border-left: 3px solid #d98a00; padding: 1.2mm 2.5mm; margin: 1.5mm 0; break-inside: avoid; }
+  .pend { background: #eaf6ee; border: 1px solid #8cc9a0; border-left: 3px solid #2e8b57; padding: 1.2mm 2.5mm; margin: 1.5mm 0; break-inside: avoid; }
+  .pie { margin-top: 3mm; font-size: 8pt; color: #555; }
+  .salto { break-before: page; }
+</style>
+</head>
+<body>
+
+<h1>Hoja rápida · Bases de datos (JDBC + SQLite) y ficheros en Java</h1>
+<p>Acceso a Datos · 2º DAM · Repaso para el examen del 25 nov 2026.</p>
+
+<h2>1. Estructura por capas</h2>
+<table>
+<tr><th>Capa</th><th>Clase</th><th>Responsabilidad</th></tr>
+<tr><td>Modelo</td><td><code>Tarea</code></td><td>Atributos <code>private</code>, constructores, getters/setters, <code>toString</code>. No sabe nada de la base de datos.</td></tr>
+<tr><td>Datos (DAO)</td><td><code>TareaDAO</code></td><td>Todo el SQL. Métodos <code>static</code> con <code>throws SQLException</code>. No imprime ni captura.</td></tr>
+<tr><td>Interfaz</td><td><code>Main</code></td><td>Menú, lectura de teclado, <code>try/catch</code> y mensajes al usuario.</td></tr>
+</table>
+
+<h2>2. Molde de un método DAO (JDBC)</h2>
+<ol style="margin:1mm 0; padding-left:5mm">
+<li>Escribir el SQL con <code>?</code> donde van los datos (constante <code>private static final</code>).</li>
+<li>Abrir <code>Connection</code> y <code>PreparedStatement</code> en un <code>try-with-resources</code>.</li>
+<li>Rellenar los <code>?</code>: <code>setString(1, …)</code>, <code>setInt(2, …)</code>. <b>Se numeran desde 1.</b></li>
+<li>Ejecutar y, si es un <code>SELECT</code>, recorrer el <code>ResultSet</code>.</li>
+</ol>
+
+<div class="cols">
+<div>
+<h3>Escribir: INSERT / UPDATE / DELETE</h3>
+<pre>public static boolean eliminar(int id)
+        throws SQLException {
+    boolean ok = false;
+    try (Connection c =
+             DriverManager.getConnection(URL);
+         PreparedStatement ps =
+             c.prepareStatement(SQL_ELIMINAR)) {
+        ps.setInt(1, id);
+        ok = ps.executeUpdate() &gt; 0;
+    }
+    return ok;
+}</pre>
+</div>
+<div>
+<h3>Leer: SELECT</h3>
+<pre>public static ArrayList&lt;Tarea&gt; listarTodos()
+        throws SQLException {
+    ArrayList&lt;Tarea&gt; lista = new ArrayList&lt;&gt;();
+    try (Connection c =
+             DriverManager.getConnection(URL);
+         PreparedStatement ps =
+             c.prepareStatement(SQL_LISTAR)) {
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapear(rs));
+            }
+        }
+    }
+    return lista;
+}</pre>
+</div>
+</div>
+
+<pre>private static Tarea mapear(ResultSet rs) throws SQLException {
+    return new Tarea(rs.getInt("id"), rs.getString("titulo"), rs.getBoolean("hecha"));
+}</pre>
+
+<table>
+<tr><th>Método</th><th>Se usa con</th><th>Devuelve</th></tr>
+<tr><td><code>executeQuery()</code></td><td><code>SELECT</code></td><td><code>ResultSet</code>: se recorre con <code>rs.next()</code></td></tr>
+<tr><td><code>executeUpdate()</code></td><td><code>CREATE</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td><td><code>int</code>: filas afectadas (<code>&gt; 0</code> = éxito)</td></tr>
+</table>
+
+<p><b>Orden de un acceso JDBC:</b> abrir conexión → preparar el <code>PreparedStatement</code> → rellenar <code>?</code> → ejecutar → leer el <code>ResultSet</code>. Se cierra en orden inverso, y lo hace el <code>try-with-resources</code>.</p>
+
+<h2>3. SQL que se usa en los ejercicios</h2>
+<pre>CREATE TABLE IF NOT EXISTS tarea(id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                 titulo TEXT NOT NULL, hecha INTEGER NOT NULL)
+INSERT INTO tarea(titulo, hecha) VALUES(?, ?)            -- sin id: lo genera SQLite
+SELECT * FROM tarea WHERE codigo = ?
+SELECT * FROM producto WHERE LOWER(nombre) LIKE LOWER(?) -- setString(1, "%" + texto + "%")
+UPDATE producto SET precio = ? WHERE codigo = ?
+DELETE FROM tarea WHERE id = ?
+SELECT COUNT(codigo), AVG(precio), MAX(precio), MIN(precio) FROM producto
+SELECT categoria, COUNT(codigo) FROM producto GROUP BY categoria</pre>
+<ul>
+<li>URL de SQLite: <code>jdbc:sqlite:archivo.db</code> (se crea solo al conectar).</li>
+<li>SQLite no tiene booleano: <code>hecha</code> es <code>INTEGER</code> (0/1). <code>setBoolean</code> y <code>getBoolean</code> convierten.</li>
+<li>Una clave primaria repetida lanza <code>SQLException</code>: se captura en quien llama al DAO.</li>
+<li>Los DAOs <b>propagan</b> la excepción (<code>throws SQLException</code>); <code>Main</code> y <code>GestorFicheros</code> deciden qué mostrar.</li>
+</ul>
+
+<div class="aviso"><b>Errores que ya salieron (revisar antes de entregar)</b>
+<table>
+<tr><th>Error</th><th>Qué provoca</th></tr>
+<tr><td><code>CREATE TABLE</code> sin nombre de tabla, sin paréntesis o con <code>WHERE</code></td><td><code>SQLException</code> al arrancar</td></tr>
+<tr><td><code>mapear</code> con el constructor sin id, o constructor que no asigna <code>this.id</code></td><td>Todos los ids salen como 0 y <code>eliminar</code> no sirve</td></tr>
+<tr><td><code>listarTodos</code> sin <code>return lista</code></td><td>El resultado se pierde</td></tr>
+<tr><td><code>ORDER BY</code> por una columna que no existe</td><td><code>SQLException</code> al listar</td></tr>
+<tr><td>Número de <code>?</code> distinto del de <code>setX</code></td><td><code>SQLException</code> o columna sin rellenar</td></tr>
+</table></div>
+
+<h2>4. Ficheros de texto: lectura y escritura</h2>
+
+<div class="cols">
+<div>
+<h3>Escribir con <code>BufferedWriter</code></h3>
+<pre>try (BufferedWriter bw = new BufferedWriter(
+        new FileWriter(archivo))) {
+    for (Producto p : lista) {
+        bw.write(String.format(Locale.US,
+            "%s;%s;%s;%.2f;%d", p.getCodigo(),
+            p.getNombre(), p.getCategoria(),
+            p.getPrecio(), p.getStock()));
+        bw.newLine();
+    }
+} catch (IOException e) { ... }</pre>
+<ul>
+<li><code>new FileWriter(f)</code> <b>sobrescribe</b>.</li>
+<li><code>new FileWriter(f, true)</code> <b>añade</b> al final.</li>
+<li><code>Locale.US</code> obliga a punto decimal. Sin él, en un sistema en español el decimal sale con coma y corrompe el CSV.</li>
+</ul>
+</div>
+<div>
+<h3>Leer con <code>BufferedReader</code></h3>
+<pre>try (BufferedReader br = new BufferedReader(
+        new FileReader(archivo))) {
+    String linea;
+    while ((linea = br.readLine()) != null) {
+        String[] campos = linea.split(";");
+        if (campos.length != 5) {
+            // línea mal formada: saltarla
+            continue;
+        }
+        ...
+    }
+} catch (IOException e) { ... }</pre>
+<ul>
+<li><code>readLine()</code> devuelve <code>null</code> al final.</li>
+<li><code>read()</code> devuelve <code>-1</code> al final.</li>
+<li><code>File.exists()</code> comprueba si el fichero existe.</li>
+</ul>
+</div>
+</div>
+
+<h3>Importar una línea sin que un fallo aborte todo el bucle</h3>
+<pre>try {
+    Producto p = new Producto(campos[0], campos[1], campos[2],
+                              Double.parseDouble(campos[3]), Integer.parseInt(campos[4]));
+    ProductoDAO.insertar(p);
+    insertados++;
+} catch (NumberFormatException e1) { saltadas++; }   // subclase PRIMERO
+  catch (IllegalArgumentException e2) { saltadas++; } // la superclase después
+  catch (SQLException e3) { saltadas++; }             // un fallo del DAO no aborta el resto
+// al terminar el while: imprimir el resumen (insertadas, actualizadas, saltadas)</pre>
+<ul>
+<li><code>NumberFormatException</code> es subclase de <code>IllegalArgumentException</code>: el <code>catch</code> de la subclase va <b>antes</b>, o no compila.</li>
+<li>Si el <code>try</code> ya no lanza una excepción comprobada (<code>SQLException</code>), capturarla en un multi-catch es un error de compilación: <i>exception is never thrown in body of corresponding try statement</i>.</li>
+</ul>
+
+<h3>API moderna: <code>java.nio.file</code></h3>
+<table>
+<tr><th>Quiero…</th><th>Código</th></tr>
+<tr><td>Leer todo como texto</td><td><code>Files.readString(ruta)</code></td></tr>
+<tr><td>Leer todas las líneas</td><td><code>List&lt;String&gt; l = Files.readAllLines(ruta);</code></td></tr>
+<tr><td>Crear o <b>sobrescribir</b></td><td><code>Files.writeString(ruta, texto)</code></td></tr>
+<tr><td><b>Añadir</b> (crea si no existe)</td><td><code>Files.writeString(ruta, texto, StandardOpenOption.CREATE, StandardOpenOption.APPEND)</code></td></tr>
+<tr><td>Crear solo si <b>no existe</b></td><td><code>StandardOpenOption.CREATE_NEW</code> (falla si existe)</td></tr>
+</table>
+<ul>
+<li><code>CREATE</code> <b>solo</b>, sobre un fichero existente, <b>no vacía</b>: escribe encima y deja restos.</li>
+<li><code>APPEND</code> solo, sobre un fichero que no existe, lanza <code>NoSuchFileException</code>.</li>
+<li>Nunca mezclar <code>APPEND</code> con <code>TRUNCATE_EXISTING</code>.</li>
+<li>Ruta: <code>Path.of("notas.txt")</code>. Cuidado con comillas sueltas dentro de la cadena.</li>
+</ul>
+
+<h2>5. Teclado con <code>Scanner</code> y menús</h2>
+<ul>
+<li><b>Lee todo con <code>sc.nextLine()</code></b> y convierte después: <code>Integer.parseInt</code>, <code>Double.parseDouble</code>, <code>Boolean.parseBoolean</code>.</li>
+<li>No mezcles <code>nextInt()</code> / <code>nextBoolean()</code> con <code>nextLine()</code>: dejan el salto de línea en el buffer y el siguiente <code>nextLine()</code> lee una cadena vacía.</li>
+<li>La variable del menú es <b>local</b> y se inicializa a <code>-1</code> (con 0, un primer valor inválido cierra el programa).</li>
+<li>Protege cada <code>parseInt</code> / <code>parseDouble</code> con <code>catch (NumberFormatException e)</code>: avisa y vuelve al menú.</li>
+<li>Cada llamada al DAO va en su propio <code>try/catch (SQLException e)</code>.</li>
+</ul>
+
+<h2>6. Lo que falta por practicar</h2>
+<div class="pend">
+<ul>
+<li><b>Semana 26-30 oct:</b> serialización de objetos, JSON y XML (guardar y leer la lista de <code>Tarea</code>).</li>
+<li><b>Transacciones:</b> <code>conexion.setAutoCommit(false)</code>, varias sentencias, <code>commit()</code> y, en el <code>catch</code>, <code>rollback()</code>.</li>
+<li><b>JOIN:</b> una consulta con dos tablas relacionadas, mapeada a objetos.</li>
+<li><b>Más:</b> JUnit para el DAO, y la UD2 (ORM con JPA/Hibernate y NoSQL).</li>
+</ul>
+</div>
+
+<p class="pie">Basada en los ejercicios <code>jdbc-sqlite</code> (<code>gestorProductos</code>, <code>gestorTareas</code>) y <code>AccesoADatos</code>. Enunciado completo del gestor de tareas: <code>ENUNCIADO_gestorTareas.md</code>.</p>
+
+</body>
+</html>
