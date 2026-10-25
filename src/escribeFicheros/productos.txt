@@ -1,0 +1,10 @@
+Teclado;25.50
+Raton;12.00
+Monitor;189.99
+Cable HDMI;abc
+Alfombrilla;7.5
+Webcam;45
+Linea sin precio
+Auriculares;19.99
+Soporte;20.00
+Impresora;59.99

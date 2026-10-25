@@ -1,0 +1,3 @@
+oscar : 10.0 
+ nicolle : 8.0 
+ 

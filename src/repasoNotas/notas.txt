@@ -1,0 +1,9 @@
+Ana;7.5
+Luis;4.0
+Marta;9.25
+Pedro;abc
+Sofia
+Raul;10
+Elena;11
+Diego;6.5;extra
+Lucia;3.75
