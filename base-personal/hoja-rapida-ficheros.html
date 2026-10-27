@@ -1,0 +1,405 @@
+<title>Hoja rápida de ficheros en Java</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: cabecera fija con pestañas; una sección visible a la vez; selector de escritura arriba de todo */
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --fg: #1c2530;
+  --muted: #5a6776;
+  --line: #d9dee4;
+  --accent: #0b6e8a;
+  --accent-soft: #e1f0f5;
+  --code-bg: #eef1f4;
+  --warn: #8a4b00;
+  --warn-bg: #fdf0dc;
+  --ok: #1d6b3a;
+  --ok-bg: #e3f3e8;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171d;
+    --surface: #1a212a;
+    --fg: #e4e9ee;
+    --muted: #9aa6b4;
+    --line: #2d3743;
+    --accent: #5cc3df;
+    --accent-soft: #17323b;
+    --code-bg: #0f141a;
+    --warn: #f0b765;
+    --warn-bg: #33250f;
+    --ok: #7bd49b;
+    --ok-bg: #16301f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171d;
+  --surface: #1a212a;
+  --fg: #e4e9ee;
+  --muted: #9aa6b4;
+  --line: #2d3743;
+  --accent: #5cc3df;
+  --accent-soft: #17323b;
+  --code-bg: #0f141a;
+  --warn: #f0b765;
+  --warn-bg: #33250f;
+  --ok: #7bd49b;
+  --ok-bg: #16301f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.wrap { max-width: 860px; margin-inline: auto; }
+
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg);
+  padding-block: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+h1 { font-size: 1.2rem; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
+.sub { color: var(--muted); font-size: 0.85rem; margin: 0 0 10px; }
+nav.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+nav.tabs::-webkit-scrollbar { display: none; }
+nav.tabs button {
+  font: inherit; font-size: 0.88rem; font-weight: 500;
+  background: none; border: 0; border-bottom: 2px solid transparent;
+  color: var(--muted); padding: 8px 12px; cursor: pointer; white-space: nowrap;
+}
+nav.tabs button:hover { color: var(--fg); }
+nav.tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+main { padding-top: 20px; display: grid; gap: 20px; }
+section.panel[hidden] { display: none; }
+section.panel { display: grid; gap: 16px; }
+h2 { font-size: 1.05rem; font-weight: 600; margin: 0; }
+p { margin: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; min-width: 0; }
+
+.goals { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 12px; }
+.goals button {
+  font: inherit; font-size: 0.9rem; text-align: left; line-height: 1.35;
+  background: var(--bg); color: var(--fg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; cursor: pointer;
+}
+.goals button:hover { border-color: var(--accent); }
+.goals button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+
+.result { margin-top: 12px; display: grid; gap: 10px; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600;
+  background: var(--accent-soft); color: var(--accent);
+  padding: 2px 8px; border-radius: 4px;
+}
+.chip.none { background: var(--code-bg); color: var(--muted); }
+.note { font-size: 0.88rem; color: var(--muted); }
+
+.codebox { position: relative; min-width: 0; }
+pre {
+  margin: 0; background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px;
+  padding: 12px 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;
+}
+pre code { font-family: inherit; }
+.copy {
+  position: absolute; top: 6px; right: 6px;
+  font: inherit; font-size: 0.75rem; background: var(--surface); color: var(--muted);
+  border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; cursor: pointer;
+}
+.copy:hover { color: var(--fg); border-color: var(--accent); }
+.k { color: var(--accent); font-weight: 600; }
+.c { color: var(--muted); }
+
+.callout { border-radius: 6px; padding: 10px 14px; font-size: 0.9rem; }
+.callout.warn { background: var(--warn-bg); color: var(--warn); }
+.callout.ok { background: var(--ok-bg); color: var(--ok); }
+.callout b { font-weight: 600; }
+.callout code, .note code, td code, li code, p code {
+  font-family: var(--font-mono); font-size: 0.85em;
+}
+
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+td code { white-space: nowrap; }
+
+ul.checks { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .goals button, nav.tabs button, .copy { transition: background-color .12s, border-color .12s, color .12s; }
+}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <h1>Ficheros en Java</h1>
+  <p class="sub">Hoja de consulta · <code>java.nio.file</code> · Acceso a Datos</p>
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button role="tab" id="t-escribir" data-tab="escribir" aria-selected="true">Escribir</button>
+    <button role="tab" id="t-leer" data-tab="leer" aria-selected="false">Leer</button>
+    <button role="tab" id="t-lineas" data-tab="lineas" aria-selected="false">Procesar líneas</button>
+    <button role="tab" id="t-scanner" data-tab="scanner" aria-selected="false">Scanner</button>
+    <button role="tab" id="t-formato" data-tab="formato" aria-selected="false">Formato y utilidades</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ESCRIBIR -->
+<section class="panel" id="p-escribir" role="tabpanel" aria-labelledby="t-escribir">
+  <div class="card">
+    <h2>¿Qué quiero hacer con el fichero?</h2>
+    <div class="goals" id="goals">
+      <button data-goal="sobrescribir" aria-pressed="true">Sobrescribir todo, vaciar antes</button>
+      <button data-goal="anadir" aria-pressed="false">Añadir al final, crear si no existe</button>
+      <button data-goal="anadirExiste" aria-pressed="false">Añadir al final, ya debe existir</button>
+      <button data-goal="soloNuevo" aria-pressed="false">Crear solo si no existe</button>
+    </div>
+    <div class="result" id="result" aria-live="polite"></div>
+  </div>
+
+  <div class="callout warn">
+    <b>Trampa 1.</b> <code>CREATE</code> solo, sobre un fichero que ya existe, no lo vacía. Escribe encima desde el principio y deja restos. Comprobado: se escribió <code>LARGO LARGO</code>, luego <code>corto</code>, y el fichero quedó con <code>corto</code> y <code>LARGO</code> debajo.
+  </div>
+  <div class="callout warn">
+    <b>Trampa 2.</b> <code>APPEND</code> solo, sobre un fichero que no existe, lanza <code>NoSuchFileException</code>. Falta <code>CREATE</code>.
+  </div>
+  <div class="callout ok">
+    Sin ninguna opción equivale a <code>CREATE</code> + <code>TRUNCATE_EXISTING</code> + <code>WRITE</code>. Nunca se combinan <code>APPEND</code> y <code>TRUNCATE_EXISTING</code>.
+  </div>
+
+  <div class="card">
+    <h2>Escribir muchas líneas</h2>
+    <p class="note" style="margin-block:4px 10px">Se acumula en un <code>StringBuilder</code> y se escribe una sola vez, fuera del bucle. Si escribes dentro del bucle con <code>TRUNCATE_EXISTING</code>, cada vuelta borra lo anterior.</p>
+    <div class="codebox">
+      <button class="copy" type="button">Copiar</button>
+<pre><code>StringBuilder sb = new StringBuilder();
+for (Alumno a : lista) {
+    sb.append(a.getNombre()).append(";").append(a.getNota()).append("\n");
+}
+Files.writeString(ruta, sb);   <span class="c">// una sola escritura</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- LEER -->
+<section class="panel" id="p-leer" role="tabpanel" aria-labelledby="t-leer" hidden>
+  <div class="card">
+    <h2>Con <code>Files</code></h2>
+    <div class="codebox" style="margin-top:10px">
+      <button class="copy" type="button">Copiar</button>
+<pre><code>String todo = Files.readString(ruta);            <span class="c">// todo en un String</span>
+List&lt;String&gt; lineas = Files.readAllLines(ruta);  <span class="c">// un String por línea</span>
+for (String l : lineas) { /* ... */ }</code></pre>
+    </div>
+    <p class="note" style="margin-top:10px">Los dos lanzan <code>IOException</code>. O pones <code>throws IOException</code> en el método, o usas <code>try/catch</code>.</p>
+  </div>
+  <div class="card">
+    <h2>Con <code>Scanner</code>, línea a línea</h2>
+    <div class="codebox" style="margin-top:10px">
+      <button class="copy" type="button">Copiar</button>
+<pre><code>try (Scanner sc = new Scanner(new File(ruta))) {
+    while (sc.hasNextLine()) {
+        String linea = sc.nextLine().trim();
+    }
+}</code></pre>
+    </div>
+    <p class="note" style="margin-top:10px"><code>try-with-resources</code> cierra el <code>Scanner</code> aunque haya excepción.</p>
+  </div>
+</section>
+
+<!-- LINEAS -->
+<section class="panel" id="p-lineas" role="tabpanel" aria-labelledby="t-lineas" hidden>
+  <div class="card">
+    <h2>Procesar una línea <code>nombre;nota</code></h2>
+    <div class="codebox" style="margin-top:10px">
+      <button class="copy" type="button">Copiar</button>
+<pre><code>String[] partes = linea.split(";");
+if (partes.length != 2) { <span class="c">/* línea malformada */</span> continue; }
+try {
+    String nombre = partes[0].trim();
+    int marca = Integer.parseInt(partes[1].trim());
+} catch (NumberFormatException e) { <span class="c">/* dato no numérico */</span> }</code></pre>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Orden de validaciones</h2>
+    <ul class="checks" style="margin-top:10px">
+      <li>Línea vacía</li>
+      <li>Número de campos tras <code>split</code></li>
+      <li>Conversión a número, con <code>try/catch</code></li>
+      <li>Rango, por ejemplo valores negativos</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Plantilla de un ejercicio</h2>
+    <div class="codebox" style="margin-top:10px">
+      <button class="copy" type="button">Copiar</button>
+<pre><code>public static void main(String[] args) throws IOException {
+    Path ruta = Path.of("src/paquete/datos.txt");
+    <span class="c">// 1. leer y validar</span>
+    <span class="c">// 2. calcular con colecciones (HashMap&lt;String, ArrayList&lt;Integer&gt;&gt;)</span>
+    <span class="c">// 3. escribir el resultado</span>
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- SCANNER -->
+<section class="panel" id="p-scanner" role="tabpanel" aria-labelledby="t-scanner" hidden>
+  <div class="card">
+    <h2>Errores típicos con <code>Scanner(System.in)</code></h2>
+    <div class="tablewrap" style="margin-top:8px">
+      <table>
+        <thead><tr><th>Fallo</th><th>Arreglo</th></tr></thead>
+        <tbody>
+          <tr><td><code>nextLine()</code> devuelve vacío tras un <code>nextInt()</code></td><td>Añadir <code>sc.nextLine()</code> después de <code>nextInt()</code> y <code>nextDouble()</code> para consumir el salto de línea</td></tr>
+          <tr><td>Varios <code>Scanner(System.in)</code> en el programa</td><td>Usar uno solo y pasarlo, o declararlo <code>static</code></td></tr>
+          <tr><td><code>"Suspenso"</code> no coincide con <code>"SUSPENSO"</code></td><td><code>equalsIgnoreCase(...)</code>, o <code>.trim().toUpperCase()</code> antes de comparar</td></tr>
+          <tr><td>Enum mal escrito rompe el programa</td><td><code>valueOf(txt.trim().toUpperCase())</code> dentro de <code>try/catch (IllegalArgumentException e)</code></td></tr>
+          <tr><td>Letras donde iba un número</td><td>Capturar <code>InputMismatchException</code> y hacer <code>sc.nextLine()</code> para descartar lo escrito</td></tr>
+          <tr><td><code>default</code> del menú lanza excepción</td><td>Mostrar "Opción no válida" y volver al menú</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATO -->
+<section class="panel" id="p-formato" role="tabpanel" aria-labelledby="t-formato" hidden>
+  <div class="card">
+    <h2>Formato</h2>
+    <div class="tablewrap" style="margin-top:8px">
+      <table>
+        <thead><tr><th>Quiero</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td>entero</td><td><code>%d</code> (no <code>d%</code>)</td></tr>
+          <tr><td>decimal con 2 cifras</td><td><code>%.2f</code></td></tr>
+          <tr><td>texto</td><td><code>%s</code></td></tr>
+          <tr><td>salto de línea en <code>printf</code> y <code>String.format</code></td><td><code>%n</code> (no <code>/n</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <h2><code>Files</code> y <code>Path</code></h2>
+    <div class="codebox" style="margin-top:10px">
+      <button class="copy" type="button">Copiar</button>
+<pre><code>Files.exists(ruta)            Files.notExists(ruta)
+Files.createDirectories(dir)  Files.deleteIfExists(ruta)
+Files.size(ruta)              ruta.getFileName()</code></pre>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var GOALS = {
+    sobrescribir: {
+      opts: [],
+      note: 'Sin opciones, el comportamiento por defecto es crear o vaciar y escribir. También vale CREATE + TRUNCATE_EXISTING.',
+      code: 'Files.writeString(ruta, texto);\n\n// equivalente explícito\nFiles.writeString(ruta, texto,\n        StandardOpenOption.CREATE,\n        StandardOpenOption.TRUNCATE_EXISTING);'
+    },
+    anadir: {
+      opts: ['CREATE', 'APPEND'],
+      note: 'Crea el fichero la primera vez y después añade al final. Es el caso de un log.',
+      code: 'Files.writeString(ruta, linea + "\\n",\n        StandardOpenOption.CREATE,\n        StandardOpenOption.APPEND);'
+    },
+    anadirExiste: {
+      opts: ['APPEND'],
+      note: 'Si el fichero no existe lanza NoSuchFileException. Úsalo cuando quieras que falle en ese caso.',
+      code: 'Files.writeString(ruta, linea + "\\n",\n        StandardOpenOption.APPEND);'
+    },
+    soloNuevo: {
+      opts: ['CREATE_NEW'],
+      note: 'Si el fichero ya existe lanza FileAlreadyExistsException.',
+      code: 'Files.writeString(ruta, texto,\n        StandardOpenOption.CREATE_NEW);'
+    }
+  };
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function renderGoal(key) {
+    var g = GOALS[key];
+    var chips = g.opts.length
+      ? g.opts.map(function (o) { return '<span class="chip">' + o + '</span>'; }).join('')
+      : '<span class="chip none">sin opciones</span>';
+    document.getElementById('result').innerHTML =
+      '<div class="opts">' + chips + '</div>' +
+      '<p class="note">' + esc(g.note) + '</p>' +
+      '<div class="codebox"><button class="copy" type="button">Copiar</button><pre><code>' + esc(g.code) + '</code></pre></div>';
+    document.querySelectorAll('#goals button').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.goal === key ? 'true' : 'false');
+    });
+    try { sessionStorage.setItem('hr-goal', key); } catch (e) {}
+  }
+
+  function showTab(name) {
+    document.querySelectorAll('section.panel').forEach(function (p) { p.hidden = p.id !== 'p-' + name; });
+    document.querySelectorAll('nav.tabs button').forEach(function (b) {
+      b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false');
+    });
+    try { sessionStorage.setItem('hr-tab', name); } catch (e) {}
+    if (location.hash !== '#' + name) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('goals').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-goal]');
+    if (b) renderGoal(b.dataset.goal);
+  });
+  document.querySelector('nav.tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-tab]');
+    if (b) showTab(b.dataset.tab);
+  });
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.copy');
+    if (!btn) return;
+    var pre = btn.parentNode.querySelector('pre');
+    var text = pre.innerText;
+    function done() { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1200); }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(pre);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Selecciona y copia'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else { fallback(); }
+  });
+
+  var tab = 'escribir', goal = 'sobrescribir';
+  var h = (location.hash || '').slice(1);
+  if (document.getElementById('p-' + h)) tab = h;
+  else { try { tab = sessionStorage.getItem('hr-tab') || tab; } catch (e) {} }
+  try { goal = sessionStorage.getItem('hr-goal') || goal; } catch (e) {}
+  if (!GOALS[goal]) goal = 'sobrescribir';
+  if (!document.getElementById('p-' + tab)) tab = 'escribir';
+  renderGoal(goal);
+  showTab(tab);
+  window.scrollTo(0, 0);
+})();
+</script>

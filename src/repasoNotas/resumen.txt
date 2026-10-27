@@ -1,0 +1,5 @@
+Lineas Correctas:5
+Lineas Defectuosas:4
+Nota Media:6.90
+Mayor Nota:10.00
+Alumno con mayor nota:Raul

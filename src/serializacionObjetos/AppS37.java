@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class AppS37 {
 	
-	private static String ruta ="C:\\Users\\damdu201\\eclipse-workspace\\AccesoADatos\\src\\serializacionObjetos\\lista_alumnos.dat";
+	private static String ruta ="src/serializacionObjetos/lista_alumnos.dat";
 
 	private static ArrayList<Alumno> listaAlumno = new ArrayList<Alumno>();
 	
@@ -32,7 +32,7 @@ public class AppS37 {
 
 			}
 			
-			System.out.println("Lista de alumnos recuperada correctamente");
+			System.out.println("Introduce el DNI a buscar:");
 			String dniBuscado = sc.nextLine();
 			
 			for (Alumno a : listaAlumno) {
@@ -42,8 +42,9 @@ public class AppS37 {
 					System.out.println("Alumno encontrado:");
 					System.out.println("DNI:"+a.getDni());
 					System.out.println("Nombre:"+a.getNombre());
-					System.out.println("DNI:"+a.getNotaFinal());
-
+					System.out.println("Nota final:"+a.getNotaFinal());
+					encontrado = true;
+					break;
 				}
 
 			}
