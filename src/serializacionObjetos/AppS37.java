@@ -13,6 +13,7 @@ public class AppS37 {
 	private static ArrayList<Alumno> listaAlumno = new ArrayList<Alumno>();
 	
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		
 		boolean encontrado = false;
@@ -58,7 +59,7 @@ public class AppS37 {
 			System.out.println("Error:" + e);
 		}
 
-
+		sc.close();
 	}
 
 }
